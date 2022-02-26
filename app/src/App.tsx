@@ -1,4 +1,8 @@
+import { Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Toaster } from 'react-hot-toast';
+
+import Login from './pages/Login';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } },
@@ -7,9 +11,10 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div>
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      </div>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+      </Routes>
+      <Toaster />
     </QueryClientProvider>
   );
 }
