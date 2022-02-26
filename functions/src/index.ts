@@ -31,6 +31,7 @@ app.post('/access_token', async (req, res) => {
     res.status(200).send({
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
+      expires_in: response.data.expires_in,
     });
   } catch (error) {
     functions.logger.info(error, { structuredData: true });
