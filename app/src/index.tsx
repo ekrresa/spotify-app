@@ -3,14 +3,11 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { persistStore } from 'redux-persist';
 
 import App from './App';
-import { store } from './store';
+import { persistor, store } from './store';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-
-const persistor = persistStore(store);
 
 ReactDOM.render(
   <React.StrictMode>
