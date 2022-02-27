@@ -5,7 +5,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-import { NewReleases, UserProfile } from '../types';
+import { NewReleases, Search, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
 
@@ -28,7 +28,7 @@ const AppBaseQuery: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log({ result });
+
   if (result.error && result.error.status === 401) {
     api.dispatch(logout());
   }
@@ -47,7 +47,14 @@ export const spotifyAPI = createApi({
       query: (country: string) =>
         `/browse/new-releases?country=${country}&offset=0&limit=10`,
     }),
+    searchTracks: builder.query<Search, string>({
+      query: (text: string) => `/search?q=${text}&type=track`,
+    }),
   }),
 });
 
-export const { useGetNewReleasesQuery, useGetUserProfileQuery } = spotifyAPI;
+export const {
+  useGetNewReleasesQuery,
+  useGetUserProfileQuery,
+  useLazySearchTracksQuery,
+} = spotifyAPI;

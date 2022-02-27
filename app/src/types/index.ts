@@ -56,10 +56,6 @@ interface Album {
       uri: 'spotify:artist:1fYVmAFB7sC7eDoF3mJXla';
     }
   ];
-
-  external_urls: {
-    spotify: 'https://open.spotify.com/album/4TMywqUCETaHjCMralaz1p';
-  };
   href: 'https://api.spotify.com/v1/albums/4TMywqUCETaHjCMralaz1p';
   id: '4TMywqUCETaHjCMralaz1p';
   images: [
@@ -84,5 +80,25 @@ interface Album {
   release_date_precision: 'day';
   total_tracks: 1;
   type: 'album';
-  uri: 'spotify:album:4TMywqUCETaHjCMralaz1p';
+}
+
+export interface Search {
+  tracks: {
+    href: string;
+    items: Array<{
+      album: Album;
+      artists: Array<{
+        id: string;
+        name: string;
+      }>;
+      duration_ms: number;
+      id: string;
+      name: string;
+    }>;
+    limit: number;
+    next: string;
+    offset: number;
+    previous: string;
+    total: number;
+  };
 }
