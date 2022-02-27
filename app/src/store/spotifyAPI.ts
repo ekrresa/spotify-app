@@ -5,7 +5,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-import { UserProfile } from '../types';
+import { NewReleases, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
 
@@ -43,7 +43,11 @@ export const spotifyAPI = createApi({
     getUserProfile: builder.query<UserProfile, void>({
       query: () => '/me',
     }),
+    getNewReleases: builder.query<NewReleases, string>({
+      query: (country: string) =>
+        `/browse/new-releases?country=${country}&offset=0&limit=10`,
+    }),
   }),
 });
 
-export const { useGetUserProfileQuery } = spotifyAPI;
+export const { useGetNewReleasesQuery, useGetUserProfileQuery } = spotifyAPI;
