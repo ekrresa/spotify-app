@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosAuthClient } from '../lib/request';
+import { login, logout } from '../store/authReducer';
+import { useAppDispatch } from '../store/hooks';
 
 export function useAuth(code: string) {
   const [refreshToken, setRefreshToken] = useState('');
@@ -8,6 +10,7 @@ export function useAuth(code: string) {
   const [authError, setAuthError] = useState('');
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async function getAccessToken() {
@@ -21,12 +24,13 @@ export function useAuth(code: string) {
 
         setRefreshToken(response.data.refresh_token);
         setExpiresIn(response.data.expires_in);
+        dispatch(login(response.data.refresh_token));
         navigate('/');
       } catch (error: any) {
         setAuthError(error.message);
       }
     })();
-  }, [code, navigate]);
+  }, [code, dispatch, navigate]);
 
   useEffect(() => {
     (async function refreshAccessToken() {
@@ -42,13 +46,14 @@ export function useAuth(code: string) {
           })
           .catch(error => {
             // logout the user
+            dispatch(logout());
             console.log(error.message);
           });
       }, (expiresIn - 60) * 1000); // refresh the access token 1min before it expires
 
       return () => clearInterval(interval);
     })();
-  }, [refreshToken, expiresIn]);
+  }, [dispatch, refreshToken, expiresIn]);
 
   return authError;
 }
