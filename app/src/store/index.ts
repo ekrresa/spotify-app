@@ -14,6 +14,7 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: [spotifyAPI.reducerPath],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
