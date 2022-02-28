@@ -5,7 +5,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-import { NewReleases, Search, UserProfile } from '../types';
+import { NewReleases, Search, Track, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
 import { addToLibrary, getUserLibrary } from '../lib/library';
@@ -44,10 +44,12 @@ export const spotifyAPI = createApi({
   endpoints: builder => ({
     getUserProfile: builder.query<UserProfile, void>({
       query: () => '/me',
+      keepUnusedDataFor: 86_400,
     }),
     getNewReleases: builder.query<NewReleases, string>({
       query: (country: string) =>
         `/browse/new-releases?country=${country}&offset=0&limit=10`,
+      keepUnusedDataFor: 3600,
     }),
     searchTracks: builder.query<Search, string>({
       query: (text: string) => `/search?q=${text}&type=track`,
@@ -62,10 +64,11 @@ export const spotifyAPI = createApi({
       },
       invalidatesTags: ['Track'],
     }),
-    getUserLibrary: builder.query<any, string>({
+    getUserLibrary: builder.query<Track[], string>({
       queryFn: async args => {
         return await getUserLibrary(args);
       },
+      keepUnusedDataFor: 3600,
       providesTags: ['Track'],
     }),
   }),
