@@ -1,4 +1,4 @@
-import { Album } from '../types';
+import { Album, Track } from '../types';
 
 export function millisecondsToDuration(milliseconds: number) {
   const minutes = Math.floor(milliseconds / 60000);
@@ -9,7 +9,7 @@ export function millisecondsToDuration(milliseconds: number) {
     : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-export function resolveAlbumToTrack(track: Album) {
+export function resolveAlbumToTrack(track: Album): Track {
   return {
     id: track.id,
     name: track.name,

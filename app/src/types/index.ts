@@ -2,10 +2,6 @@ export interface UserProfile {
   country: string;
   display_name: string;
   email: string;
-  followers: {
-    href: string;
-    total: number;
-  };
   href: string;
   id: string;
   images: [
@@ -32,54 +28,40 @@ export interface NewReleases {
   };
 }
 
+export interface Artist {
+  href: string;
+  id: string;
+  name: string;
+  type: string;
+  uri: string;
+}
+
+export interface TrackImage {
+  height: number;
+  url: string;
+  width: number;
+}
+
 export interface Album {
   album_type: 'album' | 'single';
-  artists: [
-    {
-      external_urls: {
-        spotify: 'https://open.spotify.com/artist/4ovtyvs7j1jSmwhkBGHqSr';
-      };
-      href: 'https://api.spotify.com/v1/artists/4ovtyvs7j1jSmwhkBGHqSr';
-      id: '4ovtyvs7j1jSmwhkBGHqSr';
-      name: 'Olamide';
-      type: 'artist';
-      uri: 'spotify:artist:4ovtyvs7j1jSmwhkBGHqSr';
-    },
-    {
-      external_urls: {
-        spotify: 'https://open.spotify.com/artist/1fYVmAFB7sC7eDoF3mJXla';
-      };
-      href: 'https://api.spotify.com/v1/artists/1fYVmAFB7sC7eDoF3mJXla';
-      id: '1fYVmAFB7sC7eDoF3mJXla';
-      name: 'Wande Coal';
-      type: 'artist';
-      uri: 'spotify:artist:1fYVmAFB7sC7eDoF3mJXla';
-    }
-  ];
-  href: 'https://api.spotify.com/v1/albums/4TMywqUCETaHjCMralaz1p';
-  id: '4TMywqUCETaHjCMralaz1p';
-  images: [
-    {
-      height: 640;
-      url: 'https://i.scdn.co/image/ab67616d0000b2733a4eb06702ccfd270ccac80f';
-      width: 640;
-    },
-    {
-      height: 300;
-      url: 'https://i.scdn.co/image/ab67616d00001e023a4eb06702ccfd270ccac80f';
-      width: 300;
-    },
-    {
-      height: 64;
-      url: 'https://i.scdn.co/image/ab67616d000048513a4eb06702ccfd270ccac80f';
-      width: 64;
-    }
-  ];
-  name: 'Hate Me';
-  release_date: '2022-02-23';
-  release_date_precision: 'day';
+  artists: Artist[];
+  href: string;
+  id: string;
+  images: TrackImage[];
+  name: string;
+  release_date: string;
+  release_date_precision: string;
   total_tracks: 1;
-  type: 'album';
+  type: string;
+}
+
+export interface Track {
+  id: string;
+  name: string;
+  artists: Artist[];
+  images: TrackImage[];
+  release_date: string;
+  spotify_uri: string;
 }
 
 export interface Search {
