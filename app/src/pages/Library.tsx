@@ -1,12 +1,17 @@
 import { IoRemoveCircle } from 'react-icons/io5';
 import { Header } from '../components/Header';
-import { useGetUserLibraryQuery, useGetUserProfileQuery } from '../store/spotifyAPI';
+import {
+  useGetUserLibraryQuery,
+  useGetUserProfileQuery,
+  useRemoveFromLibraryMutation,
+} from '../store/spotifyAPI';
 
 export default function Library() {
   const profileQuery = useGetUserProfileQuery();
   const libraryQuery = useGetUserLibraryQuery(profileQuery.data?.id ?? '', {
     skip: !Boolean(profileQuery.data?.id),
   });
+  const [trigger] = useRemoveFromLibraryMutation();
 
   return (
     <>
@@ -30,7 +35,7 @@ export default function Library() {
                     </p>
                   </div>
 
-                  <button className="pl-2">
+                  <button className="pl-2" onClick={() => trigger(track.id)}>
                     <IoRemoveCircle className="text-3xl fill-green" />
                   </button>
                 </div>

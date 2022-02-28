@@ -8,7 +8,7 @@ import {
 import { NewReleases, Search, Track, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
-import { addToLibrary, getUserLibrary } from '../lib/library';
+import { addToLibrary, getUserLibrary, removeTrackFromLibrary } from '../lib/library';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'https://api.spotify.com/v1',
@@ -54,6 +54,13 @@ export const spotifyAPI = createApi({
     searchTracks: builder.query<Search, string>({
       query: (text: string) => `/search?q=${text}&type=track`,
     }),
+    getUserLibrary: builder.query<Track[], string>({
+      queryFn: async args => {
+        return await getUserLibrary(args);
+      },
+      keepUnusedDataFor: 3600,
+      providesTags: ['Track'],
+    }),
     addToLibrary: builder.mutation({
       queryFn: async (args, queryApi) => {
         const userProfile = (queryApi.getState() as RootState).spotifyApi.queries[
@@ -64,12 +71,15 @@ export const spotifyAPI = createApi({
       },
       invalidatesTags: ['Track'],
     }),
-    getUserLibrary: builder.query<Track[], string>({
-      queryFn: async args => {
-        return await getUserLibrary(args);
+    removeFromLibrary: builder.mutation({
+      queryFn: async (args, queryApi) => {
+        const userProfile = (queryApi.getState() as RootState).spotifyApi.queries[
+          'getUserProfile(undefined)'
+        ]?.data as UserProfile;
+
+        return await removeTrackFromLibrary(userProfile.id, args);
       },
-      keepUnusedDataFor: 3600,
-      providesTags: ['Track'],
+      invalidatesTags: ['Track'],
     }),
   }),
 });
@@ -80,4 +90,5 @@ export const {
   useGetUserProfileQuery,
   useLazySearchTracksQuery,
   useAddToLibraryMutation,
+  useRemoveFromLibraryMutation,
 } = spotifyAPI;

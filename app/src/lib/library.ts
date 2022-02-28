@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { UserProfile } from '../types';
 
@@ -27,6 +27,18 @@ export async function getUserLibrary(libraryId: string) {
     return { data: result };
   } catch (error: any) {
     console.error('Error fetching library', error.message);
+    return { error: error.message };
+  }
+}
+
+export async function removeTrackFromLibrary(libraryId: string, trackId: string) {
+  try {
+    const docRef = doc(db, 'spotify-app', libraryId, 'library', trackId);
+    await deleteDoc(docRef);
+
+    return { data: true };
+  } catch (error: any) {
+    console.log(error.message);
     return { error: error.message };
   }
 }
