@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'react-hot-toast';
 
 import Home from './pages/Home';
@@ -8,10 +7,6 @@ import Login from './pages/Login';
 import { useAppDispatch, useAppSelector } from './store';
 import { axiosAuthClient } from './lib/request';
 import { logout } from './store/authReducer';
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
 
 export default function App() {
   const { refreshToken, expiresIn } = useAppSelector(state => state.auth);
@@ -39,7 +34,7 @@ export default function App() {
   }, [dispatch, refreshToken, expiresIn]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Routes>
         <Route
           path="/"
@@ -52,7 +47,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
       </Routes>
       <Toaster />
-    </QueryClientProvider>
+    </>
   );
 }
 
