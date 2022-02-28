@@ -1,4 +1,8 @@
-import { useGetNewReleasesQuery, useGetUserProfileQuery } from '../store/spotifyAPI';
+import {
+  useAddToLibraryMutation,
+  useGetNewReleasesQuery,
+  useGetUserProfileQuery,
+} from '../store/spotifyAPI';
 import { AiOutlineUser } from 'react-icons/ai';
 import { BiPlus } from 'react-icons/bi';
 import { FiLogOut } from 'react-icons/fi';
@@ -6,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch } from '../store';
 import { logout } from '../store/authReducer';
 import { Search } from '../components/Search';
+import { resolveAlbumToTrack } from '../lib/utils';
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -13,6 +18,7 @@ export default function Home() {
   const newReleases = useGetNewReleasesQuery(data?.country ?? '', {
     skip: !Boolean(data?.country),
   });
+  const [trigger] = useAddToLibraryMutation();
 
   return (
     <div className="container">
@@ -46,8 +52,11 @@ export default function Home() {
           {newReleases.data?.albums.items.map(album => (
             <div key={album.id} className="h-80 flex-1 basis-52 rounded">
               <img src={album.images[0].url} className="rounded object-cover" alt="" />
-              <p className="text-sm mt-1">{album.name}</p>
-              <button className="bg-green text-xs flex items-center rounded-md px-2 py-1 mt-2">
+              <p className="text-[0.8rem] mt-1 font-medium">{album.name}</p>
+              <button
+                className="bg-green text-xs flex items-center rounded-md px-2 py-1 mt-2"
+                onClick={() => trigger(resolveAlbumToTrack(album))}
+              >
                 <BiPlus className="text-lg" />
                 <span>Save to Library</span>
               </button>

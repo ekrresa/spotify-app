@@ -8,6 +8,7 @@ import {
 import { NewReleases, Search, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
+import { addToLibrary } from '../lib/library';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'https://api.spotify.com/v1',
@@ -39,6 +40,7 @@ const AppBaseQuery: BaseQueryFn<
 export const spotifyAPI = createApi({
   reducerPath: 'spotifyApi',
   baseQuery: AppBaseQuery,
+  tagTypes: ['NewReleases', 'Search', 'UserProfile'],
   endpoints: builder => ({
     getUserProfile: builder.query<UserProfile, void>({
       query: () => '/me',
@@ -46,9 +48,20 @@ export const spotifyAPI = createApi({
     getNewReleases: builder.query<NewReleases, string>({
       query: (country: string) =>
         `/browse/new-releases?country=${country}&offset=0&limit=10`,
+      providesTags: ['NewReleases'],
     }),
     searchTracks: builder.query<Search, string>({
       query: (text: string) => `/search?q=${text}&type=track`,
+    }),
+    addToLibrary: builder.mutation({
+      queryFn: async (args, queryApi) => {
+        const userProfile = (queryApi.getState() as RootState).spotifyApi.queries[
+          'getUserProfile(undefined)'
+        ]?.data as UserProfile;
+
+        return await addToLibrary(userProfile, args);
+      },
+      invalidatesTags: ['NewReleases'],
     }),
   }),
 });
@@ -57,4 +70,5 @@ export const {
   useGetNewReleasesQuery,
   useGetUserProfileQuery,
   useLazySearchTracksQuery,
+  useAddToLibraryMutation,
 } = spotifyAPI;

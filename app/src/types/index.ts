@@ -32,7 +32,7 @@ export interface NewReleases {
   };
 }
 
-interface Album {
+export interface Album {
   album_type: 'album' | 'single';
   artists: [
     {
