@@ -18,7 +18,7 @@ export function Modal({ isOpen, children }: ModalProps) {
       />
 
       <div
-        className={`absolute mt-32 pb-40 h-full shadow-lg overflow-auto w-full p-4 transition-opacity duration-300 ease-in-out ${
+        className={`absolute pb-10 h-full shadow-lg overflow-auto w-full p-4 transition-opacity duration-300 ease-in-out ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
       >
