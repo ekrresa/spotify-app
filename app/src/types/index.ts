@@ -64,23 +64,25 @@ export interface Track {
   spotify_uri: string;
 }
 
-export interface Search {
+export interface SearchResult {
   tracks: {
     href: string;
-    items: Array<{
-      album: Album;
-      artists: Array<{
-        id: string;
-        name: string;
-      }>;
-      duration_ms: number;
-      id: string;
-      name: string;
-    }>;
+    items: Array<SearchedRecord>;
     limit: number;
     next: string;
     offset: number;
     previous: string;
     total: number;
   };
+}
+
+export interface SearchedRecord {
+  album: Album;
+  artists: Array<{
+    id: string;
+    name: string;
+  }>;
+  duration_ms: number;
+  id: string;
+  name: string;
 }

@@ -1,4 +1,4 @@
-import { Album, Track } from '../types';
+import { Album, SearchedRecord, Track } from '../types';
 
 export function millisecondsToDuration(milliseconds: number) {
   const minutes = Math.floor(milliseconds / 60000);
@@ -17,5 +17,16 @@ export function resolveAlbumToTrack(track: Album): Track {
     images: track.images,
     release_date: track.release_date,
     spotify_uri: 'spotify:track:' + track.id,
+  };
+}
+
+export function resolveSearchToTrack(result: SearchedRecord) {
+  return {
+    id: result.id,
+    name: result.name,
+    artists: result.artists,
+    images: result.album.images,
+    release_date: result.album.release_date,
+    spotify_uri: 'spotify:track:' + result.id,
   };
 }

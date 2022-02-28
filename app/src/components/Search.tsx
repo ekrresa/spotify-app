@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { IoClose, IoAddCircle, IoSearch } from 'react-icons/io5';
-import { millisecondsToDuration } from '../lib/utils';
-import { useLazySearchTracksQuery } from '../store/spotifyAPI';
+import { millisecondsToDuration, resolveSearchToTrack } from '../lib/utils';
+import { useAddToLibraryMutation, useLazySearchTracksQuery } from '../store/spotifyAPI';
 import { Modal } from './Modal';
 
 export function Search() {
   const [text, setText] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [trigger, { data }] = useLazySearchTracksQuery();
+  const [addTrackTrigger] = useAddToLibraryMutation();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -86,7 +87,14 @@ export function Search() {
                     </div>
                   </div>
 
-                  <button className="ml-auto">
+                  <button
+                    className="ml-auto"
+                    onClick={() =>
+                      addTrackTrigger(
+                        resolveSearchToTrack({ album, artists, duration_ms, id, name })
+                      )
+                    }
+                  >
                     <IoAddCircle className="text-3xl fill-green" />
                   </button>
                 </div>

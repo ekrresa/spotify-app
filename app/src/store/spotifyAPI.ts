@@ -5,7 +5,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-import { NewReleases, Search, Track, UserProfile } from '../types';
+import { NewReleases, SearchResult, Track, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
 import { addToLibrary, getUserLibrary, removeTrackFromLibrary } from '../lib/library';
@@ -40,7 +40,8 @@ const AppBaseQuery: BaseQueryFn<
 export const spotifyAPI = createApi({
   reducerPath: 'spotifyApi',
   baseQuery: AppBaseQuery,
-  tagTypes: ['NewReleases', 'Search', 'Track', 'UserProfile'],
+  tagTypes: ['NewReleases', 'SearchResult', 'Track', 'UserProfile'],
+  keepUnusedDataFor: 3600,
   endpoints: builder => ({
     getUserProfile: builder.query<UserProfile, void>({
       query: () => '/me',
@@ -49,16 +50,14 @@ export const spotifyAPI = createApi({
     getNewReleases: builder.query<NewReleases, string>({
       query: (country: string) =>
         `/browse/new-releases?country=${country}&offset=0&limit=10`,
-      keepUnusedDataFor: 3600,
     }),
-    searchTracks: builder.query<Search, string>({
-      query: (text: string) => `/search?q=${text}&type=track`,
+    searchTracks: builder.query<SearchResult, string>({
+      query: (text: string) => `/search?q=track:${text}&type=track`,
     }),
     getUserLibrary: builder.query<Track[], string>({
       queryFn: async args => {
         return await getUserLibrary(args);
       },
-      keepUnusedDataFor: 3600,
       providesTags: ['Track'],
     }),
     addToLibrary: builder.mutation({
