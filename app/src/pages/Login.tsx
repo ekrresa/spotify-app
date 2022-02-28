@@ -17,7 +17,7 @@ export default function Login() {
   }
 
   return (
-    <div className="container h-screen">
+    <div className="container px-5 h-screen">
       <div className="pt-52 text-center py-4">
         <img src={Logo} className="w-[35rem] mx-auto" alt="Spotify Logo" />
         <a

@@ -13,7 +13,7 @@ export function Header() {
 
   return (
     <header>
-      <div className="py-6 container flex items-center">
+      <div className="py-6 container px-5 flex items-center">
         <div className="rounded-full w-10 h-10 bg-gray-400 grid place-items-center">
           <AiOutlineUser />
         </div>
