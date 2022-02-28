@@ -1,15 +1,19 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { persistReducer, persistStore } from 'redux-persist';
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './authReducer';
 import { spotifyAPI } from './spotifyAPI';
-
-const reducers = combineReducers({
-  auth: authReducer,
-  [spotifyAPI.reducerPath]: spotifyAPI.reducer,
-});
 
 const persistConfig = {
   key: 'root',
@@ -17,12 +21,21 @@ const persistConfig = {
   blacklist: [spotifyAPI.reducerPath],
 };
 
+const reducers = combineReducers({
+  auth: authReducer,
+  [spotifyAPI.reducerPath]: spotifyAPI.reducer,
+});
+
 const persistedReducer = persistReducer(persistConfig, reducers);
 
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(spotifyAPI.middleware),
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(spotifyAPI.middleware),
   devTools: process.env.NODE_ENV !== 'production',
 });
 

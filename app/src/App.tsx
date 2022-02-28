@@ -1,24 +1,19 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'react-hot-toast';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import { useAppDispatch, useAppSelector } from './store';
 import { axiosAuthClient } from './lib/request';
-import { logout } from './store/authReducer';
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { refetchOnWindowFocus: false } },
-});
+import { logout, refreshAccessToken } from './store/authReducer';
 
 export default function App() {
   const { refreshToken, expiresIn } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    (async function refreshAccessToken() {
+    (async function refreshAuthToken() {
       if (!refreshToken || !expiresIn) {
         return;
       }
@@ -27,6 +22,12 @@ export default function App() {
         axiosAuthClient
           .post('/refresh_token', { refresh_token: refreshToken })
           .then(response => {
+            dispatch(
+              refreshAccessToken({
+                accessToken: response.data.access_token,
+                expiresIn: response.data.expires_in,
+              })
+            );
             console.log(response.data);
           })
           .catch(() => {
@@ -39,7 +40,7 @@ export default function App() {
   }, [dispatch, refreshToken, expiresIn]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Routes>
         <Route
           path="/"
@@ -52,7 +53,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
       </Routes>
       <Toaster />
-    </QueryClientProvider>
+    </>
   );
 }
 
