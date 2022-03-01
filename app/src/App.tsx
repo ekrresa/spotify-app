@@ -29,12 +29,11 @@ export default function App() {
                 expiresIn: response.data.expires_in,
               })
             );
-            console.log(response.data);
           })
           .catch(() => {
             dispatch(logout());
           });
-      }, (expiresIn - 60) * 1000); // refresh the access token 1min before it expires
+      }, (expiresIn - 600) * 1000); // refresh the access token 10mins before it expires
 
       return () => clearInterval(interval);
     })();
