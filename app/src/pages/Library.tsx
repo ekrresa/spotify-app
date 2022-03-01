@@ -20,7 +20,7 @@ export default function Library() {
       <section className="mt-10 mx-auto max-w-7xl px-5">
         <h1 className="mb-8 text-2xl">My Library</h1>
 
-        <div className="grid grid-cols-releases gap-x-6 gap-y-20">
+        <div className="grid grid-cols-releases gap-x-6 gap-y-20 pb-10">
           {libraryQuery.data &&
             libraryQuery.data.map(track => (
               <div key={track.id} className="max-w-xs flex flex-col basis-52">

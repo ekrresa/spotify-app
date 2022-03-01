@@ -1,4 +1,12 @@
-import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  setDoc,
+  query,
+} from 'firebase/firestore';
 import { db } from './firebase';
 import { Track } from '../types';
 
@@ -16,7 +24,11 @@ export async function addToLibrary(userId: string, track: Track) {
 
 export async function getUserLibrary(userId: string) {
   try {
-    const querySnapshot = await getDocs(collection(db, 'spotify-app', userId, 'library'));
+    const libraryQuery = query(
+      collection(db, 'spotify-app', userId, 'library'),
+      orderBy('name')
+    );
+    const querySnapshot = await getDocs(libraryQuery);
     let result: any[] = [];
     querySnapshot.forEach(doc => {
       result.push(doc.data());
