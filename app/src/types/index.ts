@@ -16,6 +16,15 @@ export interface UserProfile {
   uri: string;
 }
 
+export interface NewPlaylist {
+  description: string;
+  id: string;
+  external_urls: { spotify: string };
+  images: TrackImage[];
+  name: string;
+  uri: string;
+}
+
 export interface NewReleases {
   albums: {
     href: string;
@@ -26,6 +35,16 @@ export interface NewReleases {
     previous: string;
     total: number;
   };
+}
+
+export interface PlaylistItems {
+  href: string;
+  items: Array<{ track: { uri: string } }>;
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+  total: number;
 }
 
 export interface Artist {

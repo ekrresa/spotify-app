@@ -8,7 +8,12 @@ import {
 import { AlbumTrack, SearchResult, Track, UserProfile } from '../types';
 import type { RootState } from '.';
 import { logout } from './authReducer';
-import { addToLibrary, getUserLibrary, removeTrackFromLibrary } from '../lib/library';
+import {
+  addLibraryToPlaylist,
+  addToLibrary,
+  getUserLibrary,
+  removeTrackFromLibrary,
+} from '../lib/library';
 import { getNewTracks } from '../lib/request';
 
 const baseQuery = fetchBaseQuery({
@@ -84,6 +89,16 @@ export const spotifyAPI = createApi({
       },
       invalidatesTags: ['SearchResult', 'Track'],
     }),
+    exportPlaylist: builder.mutation({
+      queryFn: async (args, queryApi) => {
+        const accessToken = (queryApi.getState() as RootState).auth.accessToken as string;
+        const user = (queryApi.getState() as RootState).spotifyApi.queries[
+          'getUserProfile(undefined)'
+        ]?.data as UserProfile;
+
+        return await addLibraryToPlaylist({ accessToken, userId: user.id, ...args });
+      },
+    }),
   }),
 });
 
@@ -93,5 +108,6 @@ export const {
   useGetUserProfileQuery,
   useLazySearchTracksQuery,
   useAddToLibraryMutation,
+  useExportPlaylistMutation,
   useRemoveFromLibraryMutation,
 } = spotifyAPI;

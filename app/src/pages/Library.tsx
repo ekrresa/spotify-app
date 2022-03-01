@@ -1,6 +1,7 @@
 import { IoRemoveCircle } from 'react-icons/io5';
 import { Header } from '../components/Header';
 import {
+  useExportPlaylistMutation,
   useGetUserLibraryQuery,
   useGetUserProfileQuery,
   useRemoveFromLibraryMutation,
@@ -12,13 +13,24 @@ export default function Library() {
     skip: !Boolean(profileQuery.data?.id),
   });
   const [trigger] = useRemoveFromLibraryMutation();
+  const [exportTrigger] = useExportPlaylistMutation();
+
+  const uris = libraryQuery.data?.map(track => track.spotify_uri);
 
   return (
     <>
       <Header />
 
       <section className="mt-10 mx-auto max-w-7xl px-5">
-        <h1 className="mb-8 text-2xl">My Library</h1>
+        <div className="flex items-center justify-between mb-10">
+          <h1 className="text-2xl">My Library</h1>
+          <button
+            className="bg-green text-sm px-4 py-1 rounded-full"
+            onClick={() => exportTrigger({ uris })}
+          >
+            Export to Spotify
+          </button>
+        </div>
 
         <div className="grid grid-cols-releases gap-x-6 gap-y-20 pb-10">
           {libraryQuery.data &&
