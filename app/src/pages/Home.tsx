@@ -5,6 +5,7 @@ import {
   useGetNewReleasesQuery,
   useGetUserLibraryQuery,
   useGetUserProfileQuery,
+  useRemoveFromLibraryMutation,
 } from '../store/spotifyAPI';
 
 import { resolveTrackToSong } from '../lib/utils';
@@ -23,6 +24,7 @@ export default function Home() {
     skip: !Boolean(data?.id),
   });
   const [trigger] = useAddToLibraryMutation();
+  const [removeSongTrigger] = useRemoveFromLibraryMutation();
 
   return (
     <>
@@ -51,10 +53,7 @@ export default function Home() {
 
                 {libraryQuery.data &&
                 libraryQuery.data.some(song => song.id === track.id) ? (
-                  <button
-                    className="pl-2"
-                    onClick={() => trigger(resolveTrackToSong(track))}
-                  >
+                  <button className="pl-2" onClick={() => removeSongTrigger(track.id)}>
                     <IoRemoveCircle className="text-3xl fill-amber-500" />
                   </button>
                 ) : (
