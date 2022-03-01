@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { AiOutlineLoading } from 'react-icons/ai';
 import Logo from '../assets/Logo-white.png';
 import { getAuthorizationUrl } from '../lib/auth';
 import { useAuth } from '../hooks/useAuth';
@@ -18,13 +19,16 @@ export default function Login() {
 
   return (
     <div className="container px-5 h-screen">
-      <div className="pt-52 text-center py-4">
+      <div className="pt-52 flex flex-col items-center py-4">
         <img src={Logo} className="w-[35rem] mx-auto" alt="Spotify Logo" />
         <a
           href={getAuthorizationUrl(state)}
-          className="bg-green inline-block  mt-24 px-8 py-3 rounded-full uppercase"
+          className="bg-green flex items-center mt-24 px-8 py-4 rounded-full uppercase"
         >
-          Login with Spotify
+          <span>Login with Spotify</span>
+          {Boolean(authCode) && (
+            <AiOutlineLoading className=" ml-4 animate-spin text-xl text-white" />
+          )}
         </a>
       </div>
     </div>
