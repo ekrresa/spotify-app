@@ -4,7 +4,7 @@ export function getAuthorizationUrl(state: string) {
   const SPOTIFY_URL = 'https://accounts.spotify.com/authorize?';
   const client_id = '57d0aa753c1f43738fdb3b6a5f47d811';
   const redirect_uri = 'http://localhost:3000/login/';
-  const scope = 'user-read-private user-read-email';
+  const scope = 'user-read-private user-read-email playlist-modify-public';
 
   const queryString = qs.stringify({
     response_type: 'code',
