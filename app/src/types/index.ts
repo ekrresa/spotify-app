@@ -95,9 +95,11 @@ export interface AlbumTrack {
 
 export interface Track {
   id: string;
-  name: string;
+  albumName: string;
   artists: Artist[];
+  duration: number;
   images: TrackImage[];
+  name: string;
   release_date: string;
   spotify_uri: string;
 }

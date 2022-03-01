@@ -1,5 +1,6 @@
 import { IoRemoveCircle } from 'react-icons/io5';
 import { Header } from '../components/Header';
+import { millisecondsToDuration } from '../lib/utils';
 import {
   useExportPlaylistMutation,
   useGetUserLibraryQuery,
@@ -32,27 +33,45 @@ export default function Library() {
           </button>
         </div>
 
-        <div className="grid grid-cols-releases gap-x-6 gap-y-20 pb-10">
-          {libraryQuery.data &&
+        <div className="grid grid-cols-1 gap-y-20 pb-10 px-4">
+          {libraryQuery.data && libraryQuery.data.length ? (
             libraryQuery.data.map(track => (
-              <div key={track.id} className="max-w-xs flex flex-col basis-52">
-                <img src={track.images[0].url} className="rounded object-cover" alt="" />
-                <div className="flex justify-between items-center px-1">
-                  <div className="mt-2">
-                    <p className="text-sm truncate mt-1 font-medium">{track.name}</p>
-                    <p className="truncate mt-[0.1rem] text-sm text-[#b4b4b4]">
+              <div key={track.id} className="flex items-center">
+                <div className="flex-1 max-w-[9rem]">
+                  <img
+                    src={track.images[0].url}
+                    className="rounded object-cover"
+                    alt=""
+                  />
+                </div>
+
+                <div className="ml-6 px-1">
+                  <p className="text-sm truncate mt-1 font-medium">{track.name}</p>
+                  <div className="mt-2 flex items-center text-sm truncate text-[#b4b4b4]">
+                    <p className="truncate mt-[0.1rem]">
                       {new Intl.ListFormat('en', { style: 'short' }).format(
                         track.artists.map(artist => artist.name)
                       )}
                     </p>
-                  </div>
 
-                  <button className="pl-2" onClick={() => trigger(track.id)}>
-                    <IoRemoveCircle className="text-3xl fill-amber-500" />
-                  </button>
+                    <span className="mx-2">&#8212;</span>
+                    <p className="truncate">{track.albumName}</p>
+
+                    <span className="mx-1">&#8226;</span>
+                    <p>{millisecondsToDuration(track.duration)}</p>
+                  </div>
                 </div>
+
+                <button className="pl-2 ml-auto" onClick={() => trigger(track.id)}>
+                  <IoRemoveCircle className="text-3xl fill-amber-500" />
+                </button>
               </div>
-            ))}
+            ))
+          ) : (
+            <p className="text-center">
+              It appears that you haven't added any songs to your library.
+            </p>
+          )}
         </div>
       </section>
     </>
