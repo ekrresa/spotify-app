@@ -55,6 +55,25 @@ export interface Album {
   type: string;
 }
 
+export interface AlbumTrackResponse {
+  href: string;
+  items: AlbumTrack[];
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+  total: number;
+}
+
+export interface AlbumTrack {
+  album: Album;
+  artists: Artist[];
+  duration_ms: number;
+  id: string;
+  name: string;
+  uri: string;
+}
+
 export interface Track {
   id: string;
   name: string;

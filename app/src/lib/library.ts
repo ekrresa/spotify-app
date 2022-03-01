@@ -1,11 +1,11 @@
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import { UserProfile } from '../types';
+import { Track } from '../types';
 
-export async function addToLibrary(user: UserProfile, track: any) {
+export async function addToLibrary(userId: string, track: Track) {
   try {
     const libraryRef = collection(db, 'spotify-app');
-    const trackRef = doc(libraryRef, user.id, 'library', track.id);
+    const trackRef = doc(libraryRef, userId, 'library', track.id);
     await setDoc(trackRef, track);
     return { data: true };
   } catch (e: any) {
@@ -14,11 +14,9 @@ export async function addToLibrary(user: UserProfile, track: any) {
   }
 }
 
-export async function getUserLibrary(libraryId: string) {
+export async function getUserLibrary(userId: string) {
   try {
-    const querySnapshot = await getDocs(
-      collection(db, 'spotify-app', libraryId, 'library')
-    );
+    const querySnapshot = await getDocs(collection(db, 'spotify-app', userId, 'library'));
     let result: any[] = [];
     querySnapshot.forEach(doc => {
       result.push(doc.data());
@@ -31,9 +29,10 @@ export async function getUserLibrary(libraryId: string) {
   }
 }
 
-export async function removeTrackFromLibrary(libraryId: string, trackId: string) {
+export async function removeTrackFromLibrary(userId: string, trackId: string) {
+  console.log({ userId, trackId });
   try {
-    const docRef = doc(db, 'spotify-app', libraryId, 'library', trackId);
+    const docRef = doc(db, 'spotify-app', userId, 'library', trackId);
     await deleteDoc(docRef);
 
     return { data: true };

@@ -1,15 +1,26 @@
 import * as React from 'react';
 import { FiSearch } from 'react-icons/fi';
-import { IoClose, IoAddCircle, IoSearch } from 'react-icons/io5';
-import { millisecondsToDuration, resolveSearchToTrack } from '../lib/utils';
-import { useAddToLibraryMutation, useLazySearchTracksQuery } from '../store/spotifyAPI';
+import { IoClose, IoAddCircle, IoSearch, IoRemoveCircle } from 'react-icons/io5';
+import { millisecondsToDuration, resolveSearchToSong } from '../lib/utils';
+import {
+  useAddToLibraryMutation,
+  useGetUserLibraryQuery,
+  useGetUserProfileQuery,
+  useLazySearchTracksQuery,
+  useRemoveFromLibraryMutation,
+} from '../store/spotifyAPI';
 import { Modal } from './Modal';
 
 export function Search() {
   const [text, setText] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [trigger, { data }] = useLazySearchTracksQuery();
+  const profileQuery = useGetUserProfileQuery();
+  const libraryQuery = useGetUserLibraryQuery(profileQuery.data?.id ?? '', {
+    skip: !Boolean(profileQuery.data?.id),
+  });
   const [addTrackTrigger] = useAddToLibraryMutation();
+  const [removeTrackTrigger] = useRemoveFromLibraryMutation();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -87,7 +98,28 @@ export function Search() {
                     </div>
                   </div>
 
-                  <button
+                  {libraryQuery.data &&
+                  libraryQuery.data.some(track => track.id === album.id) ? (
+                    <button
+                      className="ml-auto"
+                      onClick={() => removeTrackTrigger(album.id)}
+                    >
+                      <IoRemoveCircle className="text-3xl fill-amber-500" />
+                    </button>
+                  ) : (
+                    <button
+                      className="ml-auto"
+                      onClick={() =>
+                        addTrackTrigger(
+                          resolveSearchToSong({ album, artists, duration_ms, id, name })
+                        )
+                      }
+                    >
+                      <IoAddCircle className="text-3xl fill-green" />
+                    </button>
+                  )}
+
+                  {/* <button
                     className="ml-auto"
                     onClick={() =>
                       addTrackTrigger(
@@ -96,7 +128,7 @@ export function Search() {
                     }
                   >
                     <IoAddCircle className="text-3xl fill-green" />
-                  </button>
+                  </button> */}
                 </div>
               ))}
             </div>
