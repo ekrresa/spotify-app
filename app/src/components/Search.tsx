@@ -99,11 +99,8 @@ export function Search() {
                   </div>
 
                   {libraryQuery.data &&
-                  libraryQuery.data.some(track => track.id === album.id) ? (
-                    <button
-                      className="ml-auto"
-                      onClick={() => removeTrackTrigger(album.id)}
-                    >
+                  libraryQuery.data.some(track => track.id === id) ? (
+                    <button className="ml-auto" onClick={() => removeTrackTrigger(id)}>
                       <IoRemoveCircle className="text-3xl fill-amber-500" />
                     </button>
                   ) : (
@@ -118,17 +115,6 @@ export function Search() {
                       <IoAddCircle className="text-3xl fill-green" />
                     </button>
                   )}
-
-                  {/* <button
-                    className="ml-auto"
-                    onClick={() =>
-                      addTrackTrigger(
-                        resolveSearchToTrack({ album, artists, duration_ms, id, name })
-                      )
-                    }
-                  >
-                    <IoAddCircle className="text-3xl fill-green" />
-                  </button> */}
                 </div>
               ))}
             </div>
