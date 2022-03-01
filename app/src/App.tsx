@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import { useAppDispatch, useAppSelector } from './store';
 import { axiosAuthClient } from './lib/request';
 import { logout, refreshAccessToken } from './store/authReducer';
+import Library from './pages/Library';
 
 export default function App() {
   const { refreshToken, expiresIn } = useAppSelector(state => state.auth);
@@ -51,6 +52,14 @@ export default function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/library"
+          element={
+            <RequireAuth>
+              <Library />
+            </RequireAuth>
+          }
+        />
       </Routes>
       <Toaster />
     </>

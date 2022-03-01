@@ -1,4 +1,4 @@
-import { Album } from '../types';
+import { AlbumTrack, SearchedRecord, Track } from '../types';
 
 export function millisecondsToDuration(milliseconds: number) {
   const minutes = Math.floor(milliseconds / 60000);
@@ -9,13 +9,28 @@ export function millisecondsToDuration(milliseconds: number) {
     : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-export function resolveAlbumToTrack(track: Album) {
+export function resolveTrackToSong(track: AlbumTrack): Track {
   return {
     id: track.id,
-    name: track.name,
+    albumName: track.album.name,
     artists: track.artists,
-    images: track.images,
-    release_date: track.release_date,
-    spotify_uri: 'spotify:track:' + track.id,
+    duration: track.duration_ms,
+    images: track.album.images,
+    name: track.name,
+    release_date: track.album.release_date,
+    spotify_uri: track.uri,
+  };
+}
+
+export function resolveSearchToSong(result: SearchedRecord) {
+  return {
+    id: result.id,
+    albumName: result.album.name,
+    duration: result.duration_ms,
+    name: result.name,
+    artists: result.artists,
+    images: result.album.images,
+    release_date: result.album.release_date,
+    spotify_uri: 'spotify:track:' + result.id,
   };
 }

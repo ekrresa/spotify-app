@@ -1,69 +1,74 @@
+import * as React from 'react';
+import { IoAddCircle, IoRemoveCircle } from 'react-icons/io5';
 import {
   useAddToLibraryMutation,
   useGetNewReleasesQuery,
+  useGetUserLibraryQuery,
   useGetUserProfileQuery,
+  useRemoveFromLibraryMutation,
 } from '../store/spotifyAPI';
-import { AiOutlineUser } from 'react-icons/ai';
-import { BiPlus } from 'react-icons/bi';
-import { FiLogOut } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-import { useAppDispatch } from '../store';
-import { logout } from '../store/authReducer';
-import { Search } from '../components/Search';
-import { resolveAlbumToTrack } from '../lib/utils';
+
+import { resolveTrackToSong } from '../lib/utils';
+import { Header } from '../components/Header';
 
 export default function Home() {
-  const dispatch = useAppDispatch();
+  const [offset, setOffset] = React.useState(0);
   const { data } = useGetUserProfileQuery();
-  const newReleases = useGetNewReleasesQuery(data?.country ?? '', {
-    skip: !Boolean(data?.country),
+  const newReleases = useGetNewReleasesQuery(
+    { country: data?.country ?? '', offset },
+    {
+      skip: !Boolean(data?.country),
+    }
+  );
+  const libraryQuery = useGetUserLibraryQuery(data?.id ?? '', {
+    skip: !Boolean(data?.id),
   });
   const [trigger] = useAddToLibraryMutation();
+  const [removeSongTrigger] = useRemoveFromLibraryMutation();
 
   return (
-    <div className="container">
-      <header className="py-6 flex items-center">
-        <div className="rounded-full w-10 h-10 bg-gray-400 grid place-items-center">
-          <AiOutlineUser />
-        </div>
-        <p className="ml-4">{data?.display_name}</p>
+    <>
+      <Header />
 
-        <Search />
+      <section className="mt-10 container px-36">
+        <h1 className="text-white font-semibold text-2xl mb-8">New Releases</h1>
 
-        <Link to="/library" className="text-cyan-400 font-medium">
-          My Library
-        </Link>
-        <button className="ml-4" onClick={() => dispatch(logout())}>
-          <FiLogOut className="text-2xl" />
-        </button>
-      </header>
+        <div className="grid grid-cols-releases gap-x-6 gap-y-20 pb-10">
+          {newReleases.data?.map(track => (
+            <div key={track.id} className="rounded">
+              <img
+                src={track.album.images[0].url}
+                className="rounded object-cover"
+                alt=""
+              />
+              <div className="flex justify-between items-center px-1">
+                <div className="mt-2 truncate">
+                  <p className="text-sm truncate mt-1 font-medium">{track.name}</p>
+                  <p className="truncate mt-[0.1rem] text-sm text-[#b4b4b4]">
+                    {new Intl.ListFormat('en', { style: 'short' }).format(
+                      track.artists.map(artist => artist.name)
+                    )}
+                  </p>
+                </div>
 
-      <section className="mt-10">
-        <div className="flex items-baseline">
-          <h2 className="text-white font-semibold text-2xl">New Releases</h2>
-          <Link
-            to="/releases"
-            className="ml-8 text-xs font-medium inline-block uppercase"
-          >
-            see all
-          </Link>
-        </div>
-        <div className="mt-8 flex flex-wrap gap-4">
-          {newReleases.data?.albums.items.map(album => (
-            <div key={album.id} className="h-80 flex-1 basis-52 rounded">
-              <img src={album.images[0].url} className="rounded object-cover" alt="" />
-              <p className="text-[0.8rem] mt-1 font-medium">{album.name}</p>
-              <button
-                className="bg-green text-xs flex items-center rounded-md px-2 py-1 mt-2"
-                onClick={() => trigger(resolveAlbumToTrack(album))}
-              >
-                <BiPlus className="text-lg" />
-                <span>Save to Library</span>
-              </button>
+                {libraryQuery.data &&
+                libraryQuery.data.some(song => song.id === track.id) ? (
+                  <button className="pl-2" onClick={() => removeSongTrigger(track.id)}>
+                    <IoRemoveCircle className="text-3xl fill-amber-500" />
+                  </button>
+                ) : (
+                  <button
+                    className="pl-2"
+                    onClick={() => trigger(resolveTrackToSong(track))}
+                  >
+                    <IoAddCircle className="text-3xl fill-green" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
       </section>
-    </div>
+    </>
   );
 }
