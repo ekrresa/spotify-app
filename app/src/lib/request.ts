@@ -13,12 +13,11 @@ export const axiosSpotifyClient = axios.create({
 interface Props {
   accessToken: string | null;
   country: string;
-  offset: number;
 }
-export async function getNewTracks({ accessToken, country, offset }: Props) {
+export async function getNewTracks({ accessToken, country }: Props) {
   try {
     const albumResponse = await axiosSpotifyClient.get<NewReleases>(
-      `/browse/new-releases?country=${country}&offset=${offset}&limit=20`,
+      `/browse/new-releases?country=${country}&limit=20`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     );
 

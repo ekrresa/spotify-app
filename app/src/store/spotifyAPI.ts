@@ -53,7 +53,7 @@ export const spotifyAPI = createApi({
       query: () => '/me',
       keepUnusedDataFor: 86_400,
     }),
-    getNewReleases: builder.query<AlbumTrack[], { country: string; offset: number }>({
+    getNewReleases: builder.query<AlbumTrack[], { country: string }>({
       queryFn: async (args, queryApi) => {
         const accessToken = (queryApi.getState() as RootState).auth.accessToken as string;
         return await getNewTracks({ ...args, accessToken });
