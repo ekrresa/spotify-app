@@ -19,13 +19,13 @@ export function Header() {
         </div>
         <p className="ml-2 font-medium text-sm">{profileQuery.data?.display_name}</p>
 
-        <div className="flex space-x-8 mx-auto items-center font-semibold text-lg">
+        <div className="hidden md:flex space-x-8 mx-auto items-center font-semibold text-lg">
           <CustomLink to="/">Home</CustomLink>
           <CustomLink to="/library">Library</CustomLink>
           <Search />
         </div>
 
-        <button className="ml-4" onClick={() => dispatch(logout())}>
+        <button className="ml-auto md:ml-4" onClick={() => dispatch(logout())}>
           <FiLogOut className="text-2xl" />
         </button>
       </div>

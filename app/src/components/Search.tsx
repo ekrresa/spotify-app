@@ -31,7 +31,10 @@ export function Search() {
 
   return (
     <>
-      <button className="flex items-center" onClick={() => setOpen(true)}>
+      <button
+        className="flex items-center justify-center flex-1"
+        onClick={() => setOpen(true)}
+      >
         <IoSearch className="text-lg" />
         <p className="ml-1">Search</p>
       </button>
