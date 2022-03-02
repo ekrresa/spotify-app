@@ -132,6 +132,8 @@ export async function addLibraryToPlaylist({ accessToken, uris, userId }: Playli
     const savedUris = await getPlaylistTracks(accessToken!, playlist?.id);
     const diffedUris = arrayDiff(uris, savedUris);
 
+    if (diffedUris.length === 0) throw new Error('All tracks have been exported');
+
     const result = await addTracksToPlaylist(accessToken!, playlist?.id, diffedUris);
     return { data: result };
   } catch (error: any) {
