@@ -114,7 +114,23 @@ export const spotifyAPI = createApi({
 
         return await removeTrackFromLibrary(userProfile.id, args);
       },
-      invalidatesTags: ['SearchResult', 'Track'],
+      onQueryStarted: async (payload, { dispatch, getState, queryFulfilled }) => {
+        const user = (getState() as RootState).spotifyApi.queries[
+          'getUserProfile(undefined)'
+        ]?.data as UserProfile;
+        const patchResult = dispatch(
+          spotifyAPI.util.updateQueryData('getUserLibrary', user.id, draft => {
+            const index = draft.findIndex(song => song.id === payload);
+            draft.splice(index, 1);
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     exportPlaylist: builder.mutation({
       queryFn: async (args, queryApi) => {
