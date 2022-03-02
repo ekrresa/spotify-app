@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IoAddCircle, IoRemoveCircle } from 'react-icons/io5';
+import { toast } from 'react-hot-toast';
 
 import {
   useAddToLibraryMutation,
@@ -22,8 +23,21 @@ export default function Home() {
   const libraryQuery = useGetUserLibraryQuery(data?.id ?? '', {
     skip: !Boolean(data?.id),
   });
-  const [trigger] = useAddToLibraryMutation();
-  const [removeSongTrigger] = useRemoveFromLibraryMutation();
+  const [trigger, { status: addToLibraryStatus }] = useAddToLibraryMutation();
+  const [removeSongTrigger, { status: removeSongStatus }] =
+    useRemoveFromLibraryMutation();
+
+  React.useEffect(() => {
+    if (addToLibraryStatus === 'fulfilled') toast.success('song added successfully');
+    if (addToLibraryStatus === 'rejected')
+      toast.error('Unable to add song to your library');
+  }, [addToLibraryStatus]);
+
+  React.useEffect(() => {
+    if (removeSongStatus === 'fulfilled') toast.success('song removed successfully');
+    if (removeSongStatus === 'rejected')
+      toast.error('Unable to remove song from your library');
+  }, [removeSongStatus]);
 
   return (
     <section className="mt-10 mx-auto max-w-7xl px-4 mb-16">

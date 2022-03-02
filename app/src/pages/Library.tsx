@@ -1,4 +1,8 @@
+import * as React from 'react';
 import { IoRemoveCircle } from 'react-icons/io5';
+import { toast } from 'react-hot-toast';
+import { AiOutlineLoading } from 'react-icons/ai';
+
 import { millisecondsToDuration } from '../lib/utils';
 import {
   useExportPlaylistMutation,
@@ -12,8 +16,20 @@ export default function Library() {
   const libraryQuery = useGetUserLibraryQuery(profileQuery.data?.id ?? '', {
     skip: !Boolean(profileQuery.data?.id),
   });
-  const [trigger] = useRemoveFromLibraryMutation();
-  const [exportTrigger] = useExportPlaylistMutation();
+  const [trigger, { status: removeSongStatus }] = useRemoveFromLibraryMutation();
+  const [exportTrigger, { status: exportLibraryStatus }] = useExportPlaylistMutation();
+
+  React.useEffect(() => {
+    if (exportLibraryStatus === 'fulfilled')
+      toast.success('library export was successful');
+    if (exportLibraryStatus === 'rejected') toast.error('Failed to export library');
+  }, [exportLibraryStatus]);
+
+  React.useEffect(() => {
+    if (removeSongStatus === 'fulfilled') toast.success('song removed successfully');
+    if (removeSongStatus === 'rejected')
+      toast.error('Unable to remove song from your library');
+  }, [removeSongStatus]);
 
   const uris = libraryQuery.data?.map(track => track.spotify_uri);
 
@@ -22,10 +38,13 @@ export default function Library() {
       <div className="flex items-center justify-between mb-10">
         <h1 className="text-2xl">My Library</h1>
         <button
-          className="bg-green text-sm px-4 py-1 rounded-full"
+          className="bg-green flex items-center text-sm px-4 py-1 rounded-full"
           onClick={() => exportTrigger({ uris })}
         >
-          Export to Spotify
+          <span> Export to Spotify</span>
+          {exportLibraryStatus === 'pending' && (
+            <AiOutlineLoading className=" ml-2 animate-spin text-sm text-white" />
+          )}
         </button>
       </div>
 

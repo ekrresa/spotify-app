@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { FiSearch } from 'react-icons/fi';
+import { AiOutlineLoading } from 'react-icons/ai';
 import { IoClose, IoAddCircle, IoSearch, IoRemoveCircle } from 'react-icons/io5';
+import { toast } from 'react-hot-toast';
+
 import {
   useAddToLibraryMutation,
   useGetUserLibraryQuery,
@@ -14,13 +17,14 @@ import { millisecondsToDuration, resolveSearchToSong } from '../lib/utils';
 export function Search() {
   const [text, setText] = React.useState('');
   const [open, setOpen] = React.useState(false);
-  const [trigger, { data }] = useLazySearchTracksQuery();
+  const [trigger, { data, status: searchStatus }] = useLazySearchTracksQuery();
   const profileQuery = useGetUserProfileQuery();
   const libraryQuery = useGetUserLibraryQuery(profileQuery.data?.id ?? '', {
     skip: !Boolean(profileQuery.data?.id),
   });
-  const [addTrackTrigger] = useAddToLibraryMutation();
-  const [removeTrackTrigger] = useRemoveFromLibraryMutation();
+  const [addTrackTrigger, { status: addToLibraryStatus }] = useAddToLibraryMutation();
+  const [removeTrackTrigger, { status: removeSongStatus }] =
+    useRemoveFromLibraryMutation();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -28,6 +32,18 @@ export function Search() {
       inputRef.current.focus();
     }
   }, [open]);
+
+  React.useEffect(() => {
+    if (addToLibraryStatus === 'fulfilled') toast.success('song added successfully');
+    if (addToLibraryStatus === 'rejected')
+      toast.error('Unable to add song to your library');
+  }, [addToLibraryStatus]);
+
+  React.useEffect(() => {
+    if (removeSongStatus === 'fulfilled') toast.success('song removed successfully');
+    if (removeSongStatus === 'rejected')
+      toast.error('Unable to remove song from your library');
+  }, [removeSongStatus]);
 
   return (
     <>
@@ -61,7 +77,11 @@ export function Search() {
               }`}
               type="submit"
             >
-              search
+              {searchStatus === 'pending' ? (
+                <AiOutlineLoading className=" ml-2 animate-spin text-sm text-white" />
+              ) : (
+                <span>search</span>
+              )}
             </button>
           </form>
         </div>
