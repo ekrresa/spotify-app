@@ -12,10 +12,9 @@ import {
 import { resolveTrackToSong } from '../lib/utils';
 
 export default function Home() {
-  const [offset, setOffset] = React.useState(0);
   const { data } = useGetUserProfileQuery();
   const newReleases = useGetNewReleasesQuery(
-    { country: data?.country ?? '', offset },
+    { country: data?.country ?? '' },
     {
       skip: !Boolean(data?.country),
     }
