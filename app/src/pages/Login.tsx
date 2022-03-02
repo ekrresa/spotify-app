@@ -26,7 +26,7 @@ export default function Login() {
           className="bg-green flex items-center mt-24 px-8 py-4 rounded-full uppercase"
         >
           <span>Login with Spotify</span>
-          {Boolean(authCode) && (
+          {Boolean(authCode) && !(authError || error) && (
             <AiOutlineLoading className=" ml-4 animate-spin text-xl text-white" />
           )}
         </a>
