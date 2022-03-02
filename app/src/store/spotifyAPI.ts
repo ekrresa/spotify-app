@@ -77,7 +77,34 @@ export const spotifyAPI = createApi({
 
         return await addToLibrary(userProfile.id, args);
       },
-      invalidatesTags: ['SearchResult', 'Track'],
+      onQueryStarted: async (payload, { dispatch, getState, queryFulfilled }) => {
+        const user = (getState() as RootState).spotifyApi.queries[
+          'getUserProfile(undefined)'
+        ]?.data as UserProfile;
+        const patchResult = dispatch(
+          spotifyAPI.util.updateQueryData('getUserLibrary', user.id, draft => {
+            draft.push(payload);
+            draft.sort((a, b) => {
+              const songA = a.name.toLowerCase();
+              const songB = b.name.toLowerCase();
+
+              if (songA < songB) {
+                return -1;
+              }
+              if (songA > songB) {
+                return 1;
+              }
+              return 0;
+            });
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     removeFromLibrary: builder.mutation({
       queryFn: async (args, queryApi) => {
