@@ -17,7 +17,7 @@ export function useAuth(code: string) {
       try {
         const response = await axiosAuthClient.post('/access_token', {
           code,
-          redirect_uri: 'http://localhost:3000/login/',
+          redirect_uri: process.env.REACT_APP_REDIRECT_URI,
         });
 
         dispatch(
