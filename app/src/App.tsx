@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Outlet, RouteObject, useRoutes } from 'react-router-dom';
 
+import { useAppDispatch, useAppSelector } from './store';
+import { logout, refreshAccessToken } from './store/authReducer';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import { useAppDispatch, useAppSelector } from './store';
-import { axiosAuthClient } from './lib/request';
-import { logout, refreshAccessToken } from './store/authReducer';
 import Library from './pages/Library';
+import { RequireAuth } from './components/RequireAuth';
+import { axiosAuthClient } from './lib/request';
 
 export default function App() {
   const { refreshToken, expiresIn } = useAppSelector(state => state.auth);
@@ -39,39 +39,20 @@ export default function App() {
     })();
   }, [dispatch, refreshToken, expiresIn]);
 
-  return (
-    <>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <Home />
-            </RequireAuth>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/library"
-          element={
-            <RequireAuth>
-              <Library />
-            </RequireAuth>
-          }
-        />
-      </Routes>
-      <Toaster />
-    </>
-  );
+  return useRoutes(routes);
 }
 
-function RequireAuth({ children }: { children: JSX.Element }) {
-  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
-  const location = useLocation();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  return children;
-}
+const routes: RouteObject[] = [
+  { path: '/login', element: <Login /> },
+  {
+    element: (
+      <RequireAuth>
+        <Outlet />
+      </RequireAuth>
+    ),
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/library', element: <Library /> },
+    ],
+  },
+];
