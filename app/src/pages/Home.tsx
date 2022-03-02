@@ -43,41 +43,47 @@ export default function Home() {
     <section className="mt-10 mx-auto max-w-7xl px-4 mb-16">
       <h1 className="text-white font-semibold text-2xl mb-8">New Releases</h1>
 
-      <div className="grid grid-cols-releases-sm md:grid-cols-releases gap-x-6 gap-y-20 pb-10">
-        {newReleases.data?.map(track => (
-          <div key={track.id} className="rounded">
-            <img
-              src={track.album.images[0].url}
-              className="rounded object-cover"
-              alt=""
-            />
-            <div className="flex justify-between items-center px-1">
-              <div className="mt-2 truncate">
-                <p className="text-sm truncate mt-1 font-medium">{track.name}</p>
-                <p className="truncate mt-[0.1rem] text-sm text-[#b4b4b4]">
-                  {new Intl.ListFormat('en', { style: 'short' }).format(
-                    track.artists.map(artist => artist.name)
-                  )}
-                </p>
-              </div>
+      {newReleases.isLoading ? (
+        <p className="text-center">Loading...</p>
+      ) : newReleases.isError ? (
+        <p className="text-center text-amber-600">Error fetching new releases</p>
+      ) : (
+        <div className="grid grid-cols-releases-sm md:grid-cols-releases gap-x-6 gap-y-20 pb-10">
+          {newReleases.data?.map(track => (
+            <div key={track.id} className="rounded">
+              <img
+                src={track.album.images[0].url}
+                className="rounded object-cover"
+                alt=""
+              />
+              <div className="flex justify-between items-center px-1">
+                <div className="mt-2 truncate">
+                  <p className="text-sm truncate mt-1 font-medium">{track.name}</p>
+                  <p className="truncate mt-[0.1rem] text-sm text-[#b4b4b4]">
+                    {new Intl.ListFormat('en', { style: 'short' }).format(
+                      track.artists.map(artist => artist.name)
+                    )}
+                  </p>
+                </div>
 
-              {libraryQuery.data &&
-              libraryQuery.data.some(song => song.id === track.id) ? (
-                <button className="pl-2" onClick={() => removeSongTrigger(track.id)}>
-                  <IoRemoveCircle className="text-3xl fill-amber-500" />
-                </button>
-              ) : (
-                <button
-                  className="pl-2"
-                  onClick={() => trigger(resolveTrackToSong(track))}
-                >
-                  <IoAddCircle className="text-3xl fill-green" />
-                </button>
-              )}
+                {libraryQuery.data &&
+                libraryQuery.data.some(song => song.id === track.id) ? (
+                  <button className="pl-2" onClick={() => removeSongTrigger(track.id)}>
+                    <IoRemoveCircle className="text-3xl fill-amber-500" />
+                  </button>
+                ) : (
+                  <button
+                    className="pl-2"
+                    onClick={() => trigger(resolveTrackToSong(track))}
+                  >
+                    <IoAddCircle className="text-3xl fill-green" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

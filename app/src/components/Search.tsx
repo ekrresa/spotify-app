@@ -97,58 +97,71 @@ export function Search() {
             </button>
           </div>
 
-          {data && (
-            <div className="mt-12">
-              {data.tracks.items.map(({ album, artists, duration_ms, id, name }) => (
-                <div key={id} className="flex items-center mb-4 last:mb-0">
-                  <div className="flex-1 min-w-[4rem] max-w-[4rem] md:max-w-[6rem] lg:max-w-[7rem] rounded overflow-hidden">
-                    <img src={album.images[0].url} alt="" />
-                  </div>
-
-                  <div className="flex-1 flex justify-between ml-4 gap-x-4">
-                    <div className="text-sm flex-1 min-w-0 truncate">
-                      <p className="text-sm font-semibold truncate">{name}</p>
-
-                      <p className="flex items-center truncate font-medium max-w-3xl text-[#b4b4b4]">
-                        <span>
-                          {new Intl.ListFormat('en', { style: 'short' }).format(
-                            artists.map(artist => artist.name)
-                          )}
-                        </span>
-
-                        <span className="mx-2 hidden md:inline">&#8212;</span>
-                        <span className="truncate hidden md:inline-block">
-                          {album.name}
-                        </span>
-
-                        <span className="mx-1 hidden md:inline">&#8226;</span>
-                        <span className="hidden md:inline-block">
-                          {millisecondsToDuration(duration_ms)}
-                        </span>
-                      </p>
+          {searchStatus === 'rejected' ? (
+            <p className="text-center text-amber-500 mt-12">An error occurred</p>
+          ) : (
+            data && (
+              <div className="mt-12">
+                {data.tracks.items.map(({ album, artists, duration_ms, id, name }) => (
+                  <div key={id} className="flex items-center mb-4 last:mb-0">
+                    <div className="flex-1 min-w-[4rem] max-w-[4rem] md:max-w-[6rem] lg:max-w-[7rem] rounded overflow-hidden">
+                      <img src={album.images[0].url} alt="" />
                     </div>
 
-                    {libraryQuery.data &&
-                    libraryQuery.data.some(track => track.id === id) ? (
-                      <button className="shrink-0" onClick={() => removeTrackTrigger(id)}>
-                        <IoRemoveCircle className="text-3xl fill-amber-500" />
-                      </button>
-                    ) : (
-                      <button
-                        className="shrink-0"
-                        onClick={() =>
-                          addTrackTrigger(
-                            resolveSearchToSong({ album, artists, duration_ms, id, name })
-                          )
-                        }
-                      >
-                        <IoAddCircle className="text-3xl fill-green" />
-                      </button>
-                    )}
+                    <div className="flex-1 flex justify-between ml-4 gap-x-4">
+                      <div className="text-sm flex-1 min-w-0 truncate">
+                        <p className="text-sm font-semibold truncate">{name}</p>
+
+                        <p className="flex items-center truncate font-medium max-w-3xl text-[#b4b4b4]">
+                          <span>
+                            {new Intl.ListFormat('en', { style: 'short' }).format(
+                              artists.map(artist => artist.name)
+                            )}
+                          </span>
+
+                          <span className="mx-2 hidden md:inline">&#8212;</span>
+                          <span className="truncate hidden md:inline-block">
+                            {album.name}
+                          </span>
+
+                          <span className="mx-1 hidden md:inline">&#8226;</span>
+                          <span className="hidden md:inline-block">
+                            {millisecondsToDuration(duration_ms)}
+                          </span>
+                        </p>
+                      </div>
+
+                      {libraryQuery.data &&
+                      libraryQuery.data.some(track => track.id === id) ? (
+                        <button
+                          className="shrink-0"
+                          onClick={() => removeTrackTrigger(id)}
+                        >
+                          <IoRemoveCircle className="text-3xl fill-amber-500" />
+                        </button>
+                      ) : (
+                        <button
+                          className="shrink-0"
+                          onClick={() =>
+                            addTrackTrigger(
+                              resolveSearchToSong({
+                                album,
+                                artists,
+                                duration_ms,
+                                id,
+                                name,
+                              })
+                            )
+                          }
+                        >
+                          <IoAddCircle className="text-3xl fill-green" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </Modal>
