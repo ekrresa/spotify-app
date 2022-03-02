@@ -13,19 +13,19 @@ export function Header() {
 
   return (
     <header>
-      <div className="py-6 container px-5 flex items-center">
+      <div className="py-6 max-w-[90rem] mx-auto px-5 flex items-center">
         <div className="rounded-full w-10 h-10 bg-gray-400 grid place-items-center">
           <AiOutlineUser />
         </div>
         <p className="ml-2 font-medium text-sm">{profileQuery.data?.display_name}</p>
 
-        <div className="flex space-x-8 mx-auto items-center font-semibold text-lg">
+        <div className="hidden sm:flex space-x-8 mx-auto items-center font-semibold text-lg">
           <CustomLink to="/">Home</CustomLink>
           <CustomLink to="/library">Library</CustomLink>
           <Search />
         </div>
 
-        <button className="ml-4" onClick={() => dispatch(logout())}>
+        <button className="ml-auto md:ml-4" onClick={() => dispatch(logout())}>
           <FiLogOut className="text-2xl" />
         </button>
       </div>

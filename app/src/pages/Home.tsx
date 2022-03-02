@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { IoAddCircle, IoRemoveCircle } from 'react-icons/io5';
+import { toast } from 'react-hot-toast';
+
 import {
   useAddToLibraryMutation,
   useGetNewReleasesQuery,
@@ -7,9 +9,7 @@ import {
   useGetUserProfileQuery,
   useRemoveFromLibraryMutation,
 } from '../store/spotifyAPI';
-
 import { resolveTrackToSong } from '../lib/utils';
-import { Header } from '../components/Header';
 
 export default function Home() {
   const [offset, setOffset] = React.useState(0);
@@ -23,17 +23,32 @@ export default function Home() {
   const libraryQuery = useGetUserLibraryQuery(data?.id ?? '', {
     skip: !Boolean(data?.id),
   });
-  const [trigger] = useAddToLibraryMutation();
-  const [removeSongTrigger] = useRemoveFromLibraryMutation();
+  const [trigger, { status: addToLibraryStatus }] = useAddToLibraryMutation();
+  const [removeSongTrigger, { status: removeSongStatus }] =
+    useRemoveFromLibraryMutation();
+
+  React.useEffect(() => {
+    if (addToLibraryStatus === 'fulfilled') toast.success('song added successfully');
+    if (addToLibraryStatus === 'rejected')
+      toast.error('Unable to add song to your library');
+  }, [addToLibraryStatus]);
+
+  React.useEffect(() => {
+    if (removeSongStatus === 'fulfilled') toast.success('song removed successfully');
+    if (removeSongStatus === 'rejected')
+      toast.error('Unable to remove song from your library');
+  }, [removeSongStatus]);
 
   return (
-    <>
-      <Header />
+    <section className="mt-10 mx-auto max-w-7xl px-4 mb-16">
+      <h1 className="text-white font-semibold text-2xl mb-8">New Releases</h1>
 
-      <section className="mt-10 container px-36">
-        <h1 className="text-white font-semibold text-2xl mb-8">New Releases</h1>
-
-        <div className="grid grid-cols-releases gap-x-6 gap-y-20 pb-10">
+      {newReleases.isLoading ? (
+        <p className="text-center">Loading...</p>
+      ) : newReleases.isError ? (
+        <p className="text-center text-amber-600">Error fetching new releases</p>
+      ) : (
+        <div className="grid grid-cols-releases-sm md:grid-cols-releases gap-x-6 gap-y-20 pb-10">
           {newReleases.data?.map(track => (
             <div key={track.id} className="rounded">
               <img
@@ -68,7 +83,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </section>
-    </>
+      )}
+    </section>
   );
 }
