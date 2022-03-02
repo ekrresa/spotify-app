@@ -26,7 +26,7 @@ export default function Home() {
   const [removeSongTrigger] = useRemoveFromLibraryMutation();
 
   return (
-    <section className="mt-10 mx-auto max-w-7xl px-4 mb-24">
+    <section className="mt-10 mx-auto max-w-7xl px-4 mb-16">
       <h1 className="text-white font-semibold text-2xl mb-8">New Releases</h1>
 
       <div className="grid grid-cols-releases-sm md:grid-cols-releases gap-x-6 gap-y-20 pb-10">
