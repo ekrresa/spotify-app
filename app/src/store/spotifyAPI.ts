@@ -14,7 +14,7 @@ import {
   getUserLibrary,
   removeTrackFromLibrary,
 } from '../lib/library';
-import { getNewTracks } from '../lib/request';
+import { getNewTracks } from '../lib/library';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'https://api.spotify.com/v1',
