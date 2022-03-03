@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import arrayDiff from 'lodash.difference';
 import {
   collection,
@@ -12,7 +12,13 @@ import {
 } from 'firebase/firestore';
 import { axiosSpotifyClient } from './request';
 import { db } from './firebase';
-import { NewPlaylist, PlaylistItems, Track } from '../types';
+import {
+  AlbumTrackResponse,
+  NewPlaylist,
+  NewReleases,
+  PlaylistItems,
+  Track,
+} from '../types';
 
 export async function addToLibrary(userId: string, track: Track) {
   try {
@@ -139,5 +145,39 @@ export async function addLibraryToPlaylist({ accessToken, uris, userId }: Playli
   } catch (error: any) {
     console.log(error.message);
     return { error: error.message };
+  }
+}
+
+interface Props {
+  accessToken: string | null;
+  country: string;
+}
+export async function getNewTracks({ accessToken, country }: Props) {
+  try {
+    const albumResponse = await axiosSpotifyClient.get<NewReleases>(
+      `/browse/new-releases?country=${country}&limit=20`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    const albums = albumResponse.data.albums.items.filter(
+      album => album.album_type === 'single'
+    );
+
+    const tracksPromise = albums.map(async album => {
+      const albumTracksResponse = await axiosSpotifyClient.get<AlbumTrackResponse>(
+        `/albums/${album.id}/tracks`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const track = albumTracksResponse.data.items[0];
+      return { ...track, album };
+    });
+
+    const tracks = await Promise.all(tracksPromise);
+    return { data: tracks };
+  } catch (axiosError) {
+    let err = axiosError as AxiosError;
+    return {
+      error: err.response?.data,
+    };
   }
 }

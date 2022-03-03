@@ -24,6 +24,7 @@ export default function Login() {
         <a
           href={getAuthorizationUrl(state)}
           className="bg-green flex items-center mt-24 px-8 py-4 rounded-full uppercase"
+          data-testid="login-btn"
         >
           <span>Login with Spotify</span>
           {Boolean(authCode) && !(authError || error) && (
