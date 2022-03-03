@@ -60,7 +60,7 @@ export const spotifyAPI = createApi({
       },
     }),
     searchTracks: builder.query<SearchResult, string>({
-      query: (text: string) => `/search?q=track:${text}&type=track`,
+      query: (text: string) => `/search?q=${text}&type=track`,
       providesTags: ['SearchResult'],
     }),
     getUserLibrary: builder.query<Track[], string>({
